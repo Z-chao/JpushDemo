@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBt_ddd;
     private Retrofit mRetrofit;
     private API mApi;
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,36 +50,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBt_ccc.setOnClickListener(this);
         mBt_ddd.setOnClickListener(this);
         mRetrofit = new Retrofit.Builder()
-                .baseUrl("https://api.jpush.cn/v3/")
+                .baseUrl("https://api.jpush.cn/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         mApi = mRetrofit.create(API.class);
-
+        gson = new Gson();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_aaa:
-                String aaa = "534e77ce620ce2ee9310f18a:masterSecret";
-                String aaa64 = new String(Base64.encode(aaa.getBytes(), Base64.DEFAULT));
-                Log.i("zc", "initView:   加密后的东西" + aaa64);
-                Log.i("zc", "onClick:   走了 我是管理员, 我要推送给用户");
 
-                Gson gson = new Gson();
                 List<String> tag = new ArrayList<>();
                 tag.add("bbb");
-                PushBean pushBean = new PushBean("android",new PushBean.AudienceBean(tag),new PushBean.NotificationBean("管理员推送给用户的同志"));
+                String note = "客户端app  发送的推送,是给用户的哦";
+                PushBean.NotificationBean notification = new PushBean.NotificationBean(note, new PushBean.NotificationBean.AndroidBean());
+                PushBean pushBean = new PushBean("all",new PushBean.AudienceBean(tag), notification);
                 String s = gson.toJson(pushBean);
                 Log.i("zc", "onClick:  将bean 转换为 string" + s);
-                Call<String> push = mApi.push( s);
+                String head = "Basic NTM0ZTc3Y2U2MjBjZTJlZTkzMTBmMThhOjM3NzZmMWMxMTQ4MjkxMjgxYmZiZDBkOA==";
+                Call<String> push = mApi.push(head, pushBean);
                 push.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Response<String> response, Retrofit retrofit) {
                         if (response.body() != null) {
                             Log.i("zc", "onResponse:     看看是什么消息" + response.message());
+
                         } else {
-                            Log.i("zc", "onResponse: 请求到的数据为空" + response.code());
+                            Log.i("zc", "onResponse: 请求到的数据为空" + response.headers());
+
                         }
                     }
 
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 break;
+
             case R.id.bt_bbb:
                 //变成用户的标签
                 Log.i("zc", "onClick:   走了 我是用户,我要推送给用户的用户");

@@ -15,8 +15,8 @@ public class PushBean {
 
     /**
      * platform : all
-     * audience : {"tag":["深圳","广州","北京"]}
-     * notification : {"alert":"Hi, JPush!"}
+     * audience : {"tag":["bbb"]}
+     * notification : {"alert":"从接口上做的 推送   推送给  用户 能收到吗!","android":{}}
      */
 
     private String platform;
@@ -52,6 +52,13 @@ public class PushBean {
             this.tag = tag;
         }
 
+        @Override
+        public String toString() {
+            return "AudienceBean{" +
+                    "tag=" + tag +
+                    '}';
+        }
+
         private List<String> tag;
 
         public List<String> getTag() {
@@ -64,15 +71,26 @@ public class PushBean {
     }
 
     public static class NotificationBean {
-        public NotificationBean(String alert) {
+        public NotificationBean(String alert, AndroidBean android) {
             this.alert = alert;
+            this.android = android;
+        }
+
+        @Override
+        public String toString() {
+            return "NotificationBean{" +
+                    "alert='" + alert + '\'' +
+                    ", android=" + android +
+                    '}';
         }
 
         /**
-         * alert : Hi, JPush!
+         * alert : 从接口上做的 推送   推送给  用户 能收到吗!
+         * android : {}
          */
 
         private String alert;
+        private AndroidBean android;
 
         public String getAlert() {
             return alert;
@@ -80,6 +98,19 @@ public class PushBean {
 
         public void setAlert(String alert) {
             this.alert = alert;
+        }
+
+        public AndroidBean getAndroid() {
+            return android;
+        }
+
+        public void setAndroid(AndroidBean android) {
+            this.android = android;
+        }
+
+        public static class AndroidBean {
+            public AndroidBean() {
+            }
         }
     }
 }
